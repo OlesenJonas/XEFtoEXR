@@ -1,0 +1,46 @@
+cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
+
+##############################################################################
+
+set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
+# alternatively set in settings.json instead (vscode):
+# "cmake.configureSettings": {
+# 	"CMAKE_TOOLCHAIN_FILE": "${env:VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+# }
+
+# set(VCPKG_MANIFEST_MODE ON)
+# set(VCPKG_MANIFEST_DIR  ${CMAKE_CURRENT_SOURCE_DIR})
+
+##############################################################################
+
+project(XEFtoEXR)
+
+##############################################################################
+
+#Compiler Commands etc
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# clangd requires a compile_commands.json file
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+#dont want windows.h or other predefined min/max functions
+add_definitions(-DNOMINMAX)
+
+##############################################################################
+
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/lib/debug)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/lib/debug)
+#on windows RUNTIME_OUTPUT decides where .dll s will be put
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/out/debug)
+
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/lib/release)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/lib/release)
+#on windows RUNTIME_OUTPUT decides where .dll s will be put
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/out/release)
+
+##############################################################################
+
+add_subdirectory(source)
