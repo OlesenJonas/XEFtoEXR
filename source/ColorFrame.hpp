@@ -16,6 +16,7 @@ struct RGBA
 
 struct ColorFrame
 {
+    int64_t timeInTicks = 0;
     libfreenect2::Frame rgbPixels{1920, 1080, 4};
 
     bool replacePixelsWithNewUncompressedColorEvent(const XEFEvent& event);
