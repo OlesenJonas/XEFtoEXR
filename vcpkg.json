@@ -1,5 +1,5 @@
 {
-    "name": "kinectrecorder",
+    "name": "xeftoexr",
     "version": "0.0.1",
     "dependencies": [
         "libfreenect2"

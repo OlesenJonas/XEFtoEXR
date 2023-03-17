@@ -30,4 +30,6 @@ int main()
         // {
         // }
     }
+
+    std::cout << "Done processing!" << std::endl;
 }
