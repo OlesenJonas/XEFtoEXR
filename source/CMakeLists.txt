@@ -10,3 +10,4 @@ add_executable(main ${SOURCES})
 
 target_link_libraries(main tinyEXR)
 target_link_libraries(main libfreenect2)
+target_link_libraries(main json)
