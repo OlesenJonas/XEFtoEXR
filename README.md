@@ -21,6 +21,5 @@ Building from source requires:
 - Compiler with C++20 support
 
 - vcpkg (and root folder location saved as environment variable VCPKG_ROOT)
-	- currently used for easily adding libfreenect2 to the project. I dont like pulling all of it just to use the registration, but it works for now
 
 (Tested to work in vscode using CMake tools and Clang 15)
