@@ -8,8 +8,8 @@ set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
 # 	"CMAKE_TOOLCHAIN_FILE": "${env:VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
 # }
 
-# set(VCPKG_MANIFEST_MODE ON)
-# set(VCPKG_MANIFEST_DIR  ${CMAKE_CURRENT_SOURCE_DIR})
+set(VCPKG_MANIFEST_MODE ON)
+set(VCPKG_MANIFEST_DIR  ${CMAKE_CURRENT_SOURCE_DIR})
 
 ##############################################################################
 
@@ -43,4 +43,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/out/release)
 
 ##############################################################################
 
+find_package(freenect2 CONFIG REQUIRED)
+add_subdirectory(thirdparty)
 add_subdirectory(source)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <string>
 
 #include "Constants.hpp"
@@ -33,3 +34,6 @@ struct XEFStream
         return (streamFlags & DataConstants::FLAG_COMPRESSED) == DataConstants::FLAG_COMPRESSED;
     }
 };
+
+// Dont really like this being a shared ptr and all that but for now whatever
+inline std::shared_ptr<XEFStream> nullStream = std::make_shared<XEFStream>();

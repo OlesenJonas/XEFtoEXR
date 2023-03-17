@@ -22,4 +22,6 @@ union GUID
 {
     GUIDParts parts;
     GUIDByteArray byteArray;
+
+    bool operator==(const GUID& other);
 };

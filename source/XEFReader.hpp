@@ -35,7 +35,7 @@ class XEFReader
     std::ifstream file;
 
     int32_t streamCount = 0;
-    std::map<int16_t, XEFStream> streams;
+    std::map<int16_t, std::shared_ptr<XEFStream>> streams;
 
     bool endOfStream = false;
     int64_t eventStartAdress = -1;

@@ -72,7 +72,7 @@ XEFEvent XEFReader::getNextEvent()
 
     if(streams.find(eventKey.streamIndex) == streams.end())
     {
-        streams[eventKey.streamIndex] = readStreamDescription();
+        streams[eventKey.streamIndex] = std::make_shared<XEFStream>(readStreamDescription());
 
         return getNextEvent();
     }
@@ -129,7 +129,9 @@ XEFEvent XEFReader::readDataEvent()
 
     EventKey eventKey = readNextEventKey();
 
-    XEFStream eventStream{};
+    // cant use nullptr directly here, since an actual object with storage is needed I think?
+    //      todo: double check
+    std::shared_ptr<XEFStream> eventStream = nullStream;
     if(streams.find(eventKey.streamIndex) != streams.end())
     {
         eventStream = streams[eventKey.streamIndex];
@@ -149,19 +151,19 @@ XEFEvent XEFReader::readDataEvent()
     std::shared_ptr<uint8_t[]> tagData = nullptr;
     int frameIndex = 0;
 
-    if(!eventStream.isNull)
+    if(!eventStream->isNull)
     {
-        if(eventStream.tagSize > 0)
+        if(eventStream->tagSize > 0)
         {
-            tagData = std::shared_ptr<uint8_t[]>(new uint8_t[eventStream.tagSize]);
-            file.read(reinterpret_cast<char*>(tagData.get()), eventStream.tagSize);
+            tagData = std::shared_ptr<uint8_t[]>(new uint8_t[eventStream->tagSize]);
+            file.read(reinterpret_cast<char*>(tagData.get()), eventStream->tagSize);
 
-            if(eventStream.tagSize == 4)
+            if(eventStream->tagSize == 4)
             {
                 frameIndex = *reinterpret_cast<int32_t*>(tagData.get());
             }
         }
-        assert(!eventStream.isCompressed() || fullDataSize != dataSize);
+        assert(!eventStream->isCompressed() || fullDataSize != dataSize);
     }
     else
     {
@@ -172,7 +174,7 @@ XEFEvent XEFReader::readDataEvent()
     std::shared_ptr<uint8_t[]> eventData{new uint8_t[dataSize]};
     file.read(reinterpret_cast<char*>(eventData.get()), dataSize);
 
-    return XEFEvent(eventStream, frameIndex, relativeTimeTicks, tagData, eventData, unknown);
+    return XEFEvent(eventStream, frameIndex, relativeTimeTicks, fullDataSize, tagData, eventData, unknown);
 }
 
 XEFStream XEFReader::readStreamDescription()
@@ -192,9 +194,11 @@ XEFStream XEFReader::readStreamDescription()
         nameEvent.tagData.get() + DataConstants::STREAM_TYPID_OFFSET,
         DataConstants::STREAM_TYPID_SIZE);
 
-    std::wstring dataTypeName{(const wchar_t*)nameEvent.eventData.get()};
+    // asserted that compressed is false, so can take raw event data here
+    //      otherwise would have to decompress in case eventdata is compressed
+    std::wstring dataTypeName{(const wchar_t*)nameEvent.rawEventData.get()};
     int16_t tagSize =
-        *reinterpret_cast<int16_t*>(nameEvent.eventData.get() + DataConstants::STREAM_TAGSIZE_OFFSET);
+        *reinterpret_cast<int16_t*>(nameEvent.rawEventData.get() + DataConstants::STREAM_TAGSIZE_OFFSET);
 
     if(compressed)
     {
