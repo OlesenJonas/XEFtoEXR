@@ -6,3 +6,5 @@ add_library(tinyEXR STATIC
 )
 target_include_directories(tinyEXR PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/tinyEXR/")
 target_include_directories(tinyEXR PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_subdirectory(libfreenect2)

@@ -43,6 +43,5 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/out/release)
 
 ##############################################################################
 
-find_package(freenect2 CONFIG REQUIRED)
 add_subdirectory(thirdparty)
 add_subdirectory(source)

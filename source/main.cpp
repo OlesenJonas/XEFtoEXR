@@ -1,9 +1,13 @@
 #include <cassert>
 #include <iostream>
 #include <string>
+#include <tinyEXR/tinyEXR.h>
+
+#include <libfreenect2/registration.hpp>
 
 #include "ColorFrame.hpp"
 #include "Constants.hpp"
+#include "DepthFrame.hpp"
 #include "XEFReader.hpp"
 
 int main()
@@ -14,6 +18,11 @@ int main()
 
     int64_t lastEventTime = 0;
     ColorFrame lastColorFrame;
+    DepthFrame lastDepthFrame;
+
+    auto* registration = new libfreenect2::Registration(irCameraParams, colorCameraParams);
+    libfreenect2::Frame undistorted(512, 424, 4);
+    libfreenect2::Frame registered(512, 424, 4);
 
     XEFEvent event;
     while(!(event = reader.getNextEvent()).isNull)
@@ -26,10 +35,20 @@ int main()
             lastColorFrame.replacePixelsWithNewUncompressedColorEvent(event);
         }
 
+        if(event.getEventStreamDataTypeID() == StreamDataTypeIds::Depth)
+        {
+            lastDepthFrame.replacePixelsWithNewDepthEvent(event);
+        }
+
         // if(...)
         // {
         // }
     }
+
+    // for now just use the last two available frames for testing purposes
+    registration->apply(lastColorFrame.rgbPixels, lastDepthFrame.floatPixels, &undistorted, &registered);
+
+    delete registration;
 
     std::cout << "Done processing!" << std::endl;
 }

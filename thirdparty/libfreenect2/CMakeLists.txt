@@ -6,7 +6,5 @@ file(GLOB_RECURSE SOURCES
 )
 
 # Define the executable
-add_executable(main ${SOURCES})
-
-target_link_libraries(main tinyEXR)
-target_link_libraries(main libfreenect2)
+add_library(libfreenect2 ${SOURCES})
+target_include_directories(libfreenect2 PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../")
