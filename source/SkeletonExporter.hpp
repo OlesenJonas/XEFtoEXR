@@ -2,7 +2,7 @@
 
 #include <filesystem>
 
-#include "XEFBodyFrame.hpp"
+#include "XEF/XEFBodyFrame.hpp"
 
 struct SkeletonExporter
 {

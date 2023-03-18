@@ -4,6 +4,8 @@
 #include <cassert>
 #include <stdint.h>
 
+#include "XEFEvent.hpp"
+
 // Very basic stream-like abstraction to enable reading bytes from a byte array
 // through simple memcpy
 struct ByteStream
@@ -143,6 +145,8 @@ struct XEFBodyData
     XEFHandData HandDataLeft;
     XEFHandData HandDataRight;
 
+    int32_t pad;
+
     uint64_t TrackingID;
     XEFBodyTrackingState TrackingState;
 
@@ -162,5 +166,10 @@ struct XEFBodyFrame
 
     uint32_t QualityFlags;
 
+    int32_t padding0;
+    int32_t padding1;
+    int32_t padding2;
+
     void fillFromByteStream(ByteStream stream);
+    void replaceWithNewBodyEvent(XEFEvent& event);
 };

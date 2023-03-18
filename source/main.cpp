@@ -7,12 +7,12 @@
 #include <libfreenect2/registration.hpp>
 
 #include "ColorFrame.hpp"
-#include "Constants.hpp"
 #include "DepthFrame.hpp"
 #include "PointCloudExporter.hpp"
 #include "SkeletonExporter.hpp"
-#include "XEFBodyFrame.hpp"
-#include "XEFReader.hpp"
+#include "XEF/Constants.hpp"
+#include "XEF/XEFBodyFrame.hpp"
+#include "XEF/XEFReader.hpp"
 #include "jsonConversion.hpp"
 
 #ifdef _WIN32
@@ -79,11 +79,12 @@ int main()
         if(event.getEventStreamDataTypeID() == StreamDataTypeIds::Body)
         {
             assert(!event.eventStream->isCompressed());
-            lastBodyFrame.fillFromByteStream({
-                .data = reinterpret_cast<char*>(event.rawEventData.get()),
-                .size = event.eventDataSize,
-                .curIndex = 0,
-            });
+            lastBodyFrame.replaceWithNewBodyEvent(event);
+            // lastBodyFrame.fillFromByteStream({
+            //     .data = reinterpret_cast<char*>(event.rawEventData.get()),
+            //     .size = event.eventDataSize,
+            //     .curIndex = 0,
+            // });
         }
 
         if(event.getEventStreamDataTypeID() == StreamDataTypeIds::Depth)

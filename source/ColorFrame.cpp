@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-#include "XEFEvent.hpp"
+#include "XEF/XEFEvent.hpp"
 
 bool ColorFrame::replacePixelsWithNewUncompressedColorEvent(const XEFEvent& event)
 {

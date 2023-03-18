@@ -3,7 +3,7 @@
 #include <cassert>
 #include <stdint.h>
 
-#include "XEFEvent.hpp"
+#include "XEF/XEFEvent.hpp"
 
 bool DepthFrame::replacePixelsWithNewDepthEvent(const XEFEvent& event)
 {

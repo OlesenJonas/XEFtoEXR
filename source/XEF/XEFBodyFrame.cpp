@@ -29,7 +29,6 @@ void XEFBodyData::fillFromByteStream(ByteStream& stream)
     stream.read<XEFHandData>(&HandDataLeft);
     stream.read<XEFHandData>(&HandDataRight);
 
-    int32_t pad;
     stream.read<int32_t>(&pad);
 
     stream.read<uint64_t>(&TrackingID);
@@ -50,8 +49,13 @@ void XEFBodyFrame::fillFromByteStream(ByteStream stream)
     }
 
     stream.read<uint32_t>(&QualityFlags);
-    int32_t padding;
-    stream.read<int32_t>(&padding);
-    stream.read<int32_t>(&padding);
-    stream.read<int32_t>(&padding);
+    stream.read<int32_t>(&padding0);
+    stream.read<int32_t>(&padding1);
+    stream.read<int32_t>(&padding2);
+}
+
+void XEFBodyFrame::replaceWithNewBodyEvent(XEFEvent& event)
+{
+    assert(event.eventDataSize >= sizeof(*this));
+    memcpy(this, event.rawEventData.get(), sizeof(*this));
 }
