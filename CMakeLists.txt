@@ -2,14 +2,14 @@ cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 
 ##############################################################################
 
-set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
+# set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
 # alternatively set in settings.json instead (vscode):
 # "cmake.configureSettings": {
 # 	"CMAKE_TOOLCHAIN_FILE": "${env:VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
 # }
 
-set(VCPKG_MANIFEST_MODE ON)
-set(VCPKG_MANIFEST_DIR  ${CMAKE_CURRENT_SOURCE_DIR})
+# set(VCPKG_MANIFEST_MODE ON)
+# set(VCPKG_MANIFEST_DIR  ${CMAKE_CURRENT_SOURCE_DIR})
 
 ##############################################################################
 

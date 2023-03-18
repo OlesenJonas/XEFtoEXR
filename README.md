@@ -39,6 +39,4 @@ Building from source requires:
 
 - Compiler with C++20 support
 
-- vcpkg (and root folder location saved as environment variable VCPKG_ROOT)
-
 (Tested to work in vscode using CMake tools and Clang 15)
