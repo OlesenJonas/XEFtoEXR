@@ -35,6 +35,12 @@ class XEFReader
 
     XEFEvent getNextEvent();
 
+    uint64_t fileSize = 0;
+    inline uint64_t getProgress()
+    {
+        return file.tellg();
+    }
+
   private:
     std::string path;
     std::ifstream file;

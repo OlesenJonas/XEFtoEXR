@@ -8,7 +8,9 @@
 
 XEFReader::XEFReader(std::string_view path) : path(path)
 {
-    file = std::ifstream{this->path, std::ios::in | std::ios::binary};
+    file = std::ifstream{this->path, std::ios::in | std::ios::binary | std::ios::ate};
+    fileSize = file.tellg();
+    file.seekg(0, std::ios_base::beg);
     assert(file.is_open());
     assert(file.tellg() == 0);
 

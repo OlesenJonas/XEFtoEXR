@@ -6,8 +6,9 @@ file(GLOB_RECURSE SOURCES
 )
 
 # Define the executable
-add_executable(main ${SOURCES})
+# add_executable(main ${SOURCES})
+add_executable(XEFtoEXR ${SOURCES})
 
-target_link_libraries(main tinyEXR)
-target_link_libraries(main libfreenect2)
-target_link_libraries(main json)
+target_link_libraries(XEFtoEXR tinyEXR)
+target_link_libraries(XEFtoEXR libfreenect2)
+target_link_libraries(XEFtoEXR json)

@@ -1,4 +1,5 @@
 #include <cassert>
+#include <chrono>
 #include <filesystem>
 #include <iostream>
 #include <string>
@@ -33,6 +34,8 @@ int main()
     std::filesystem::path jsonPath =
         "C:/Users/jonas/Documents/GitHub/vrtanz/KinectRecorder/KinectRecorder/misc/SensorData.json";
     std::string objectName = "2";
+
+    auto start = std::chrono::high_resolution_clock::now();
 
     assert(inputFilePath.extension().string() == ".xef");
     std::filesystem::path baseName = inputFilePath.stem().filename();
@@ -129,7 +132,15 @@ int main()
                 lastBodyFrame, outputDirectory / ("skeleton" + getIndexSuffix(absoluteFrameIndex) + ".csv"));
             absoluteFrameIndex++;
         }
+
+        std::cout << "\r"
+                  << "Approx. progress: " << (100 * reader.getProgress()) / reader.fileSize << "%" << std::flush;
     }
+    std::cout << std::endl;
 
     std::cout << "Done processing!" << std::endl;
+
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    std::cout << "Time taken (s): " << (duration.count() / 1000.0) << std::endl;
 }
