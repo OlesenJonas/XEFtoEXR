@@ -10,6 +10,7 @@
 #include "Constants.hpp"
 #include "DepthFrame.hpp"
 #include "PointCloudExporter.hpp"
+#include "XEFBodyFrame.hpp"
 #include "XEFReader.hpp"
 #include "jsonConversion.hpp"
 
@@ -57,6 +58,7 @@ int main()
     int64_t lastEventTime = 0;
     ColorFrame lastColorFrame;
     DepthFrame lastDepthFrame;
+    XEFBodyFrame lastBodyFrame;
 
     const auto getIndexSuffix = [](uint32_t index) -> std::string
     {
@@ -72,6 +74,16 @@ int main()
         assert(event.relativeTimeTicks >= lastEventTime);
         lastEventTime = event.relativeTimeTicks;
 
+        if(event.getEventStreamDataTypeID() == StreamDataTypeIds::Body)
+        {
+            assert(!event.eventStream->isCompressed());
+            lastBodyFrame.fillFromByteStream({
+                .data = reinterpret_cast<char*>(event.rawEventData.get()),
+                .size = event.eventDataSize,
+                .curIndex = 0,
+            });
+        }
+
         if(event.getEventStreamDataTypeID() == StreamDataTypeIds::Depth)
         {
             auto diff = event.relativeTimeTicks - lastDepthFrame.timeInTicks;
@@ -81,7 +93,7 @@ int main()
 
         if(event.getEventStreamDataTypeID() == StreamDataTypeIds::UncompressedColor)
         {
-            // Check if frames were dropped by calculating the 33ms intervals inbetween the current and last event
+            // Check if frames were dropped by calculating the 33ms intervals between the current and last event
             // could also handle cases where only color frames were dropped, but depth frames did not
             //      but considering thats an error state anyways, I dont care
             auto diff = event.relativeTimeTicks - lastColorFrame.timeInTicks;
