@@ -11,6 +11,7 @@
 #include "DepthFrame.hpp"
 #include "PointCloudExporter.hpp"
 #include "SkeletonExporter.hpp"
+#include "ThreadPool.hpp"
 #include "XEF/Constants.hpp"
 #include "XEF/XEFBodyFrame.hpp"
 #include "XEF/XEFReader.hpp"
@@ -65,6 +66,9 @@ int main()
     DepthFrame lastDepthFrame;
     XEFBodyFrame lastBodyFrame;
 
+    ThreadPool threadPool;
+    threadPool.start();
+
     const auto getIndexSuffix = [](uint32_t index) -> std::string
     {
         static std::string base = "000000";
@@ -110,13 +114,25 @@ int main()
                 // dont want gaps in the video, so use last received frames to fill
                 for(int i = 0; i < intervals - 1; i++)
                 {
-                    pointCloudExporter.savePointCloud(
-                        &lastColorFrame.rgbPixels,
-                        &lastDepthFrame.floatPixels,
-                        outputDirectory / ("pointcloud" + getIndexSuffix(absoluteFrameIndex) + ".exr"));
-                    skeletonExporter.saveSkeleton(
-                        lastBodyFrame,
-                        outputDirectory / ("skeleton" + getIndexSuffix(absoluteFrameIndex) + ".csv"));
+                    assert(!threadPool.busy());
+                    std::string indexString = getIndexSuffix(absoluteFrameIndex);
+                    threadPool.queueJob(
+                        [&]()
+                        {
+                            pointCloudExporter.savePointCloud(
+                                &lastColorFrame.rgbPixels,
+                                &lastDepthFrame.floatPixels,
+                                outputDirectory / ("pointcloud" + indexString + ".exr"));
+                        });
+                    threadPool.queueJob(
+                        [&]()
+                        {
+                            skeletonExporter.saveSkeleton(
+                                lastBodyFrame, outputDirectory / ("skeleton" + indexString + ".csv"));
+                        });
+                    while(threadPool.busy())
+                    {
+                    }
                     absoluteFrameIndex++;
                 }
             }
@@ -124,12 +140,25 @@ int main()
             lastColorFrame.timeInTicks = event.relativeTimeTicks;
 
             // Color frames are always the last frame in an event, so we can produce another output frame now
-            pointCloudExporter.savePointCloud(
-                &lastColorFrame.rgbPixels,
-                &lastDepthFrame.floatPixels,
-                outputDirectory / ("pointcloud" + getIndexSuffix(absoluteFrameIndex) + ".exr"));
-            skeletonExporter.saveSkeleton(
-                lastBodyFrame, outputDirectory / ("skeleton" + getIndexSuffix(absoluteFrameIndex) + ".csv"));
+            std::string indexString = getIndexSuffix(absoluteFrameIndex);
+            assert(!threadPool.busy());
+            threadPool.queueJob(
+                [&]()
+                {
+                    pointCloudExporter.savePointCloud(
+                        &lastColorFrame.rgbPixels,
+                        &lastDepthFrame.floatPixels,
+                        outputDirectory / ("pointcloud" + indexString + ".exr"));
+                });
+            threadPool.queueJob(
+                [&]()
+                {
+                    skeletonExporter.saveSkeleton(
+                        lastBodyFrame, outputDirectory / ("skeleton" + indexString + ".csv"));
+                });
+            while(threadPool.busy())
+            {
+            }
             absoluteFrameIndex++;
         }
 
@@ -137,6 +166,8 @@ int main()
                   << "Approx. progress: " << (100 * reader.getProgress()) / reader.fileSize << "%" << std::flush;
     }
     std::cout << std::endl;
+
+    threadPool.stop();
 
     std::cout << "Done processing!" << std::endl;
 
