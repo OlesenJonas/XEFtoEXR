@@ -5,6 +5,7 @@
 #include "XEFStream.hpp"
 
 #include <fstream>
+#include <ios>
 #include <map>
 #include <stdint.h>
 #include <string>
@@ -26,6 +27,10 @@ class XEFReader
     inline void read(T* ptr)
     {
         file.read(reinterpret_cast<char*>(ptr), sizeof(T));
+    }
+    inline void skip(std::basic_istream<char>::off_type amount)
+    {
+        file.seekg(amount, std::ios_base::cur);
     }
 
     XEFEvent getNextEvent();

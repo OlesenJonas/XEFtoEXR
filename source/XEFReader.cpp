@@ -14,13 +14,13 @@ XEFReader::XEFReader(std::string_view path) : path(path)
 
     // Read xef header
     // skip first 12 bytes
-    file.seekg(12, std::ios_base::cur);
+    skip(12);
     int32_t numberOfStreams = 0;
     read<int32_t>(&numberOfStreams);
     streamCount = numberOfStreams - 1;
     assert(streamCount > 0);
     // skip the next 8 bytes
-    file.seekg(8, std::ios_base::cur);
+    skip(8);
 
     eventStartAdress = file.tellg();
 }
@@ -36,7 +36,7 @@ XEFReader::EventKey XEFReader::peekNextEventKey()
     EventKey eventKey;
     read<int16_t>(&eventKey.streamIndex);
     read<int16_t>(&eventKey.streamFlags);
-    file.seekg(-2 * 2, std::ios_base::cur);
+    skip(-2 * 2);
     assert(file.tellg() == prev);
     return eventKey;
 }
@@ -92,27 +92,27 @@ void XEFReader::readUnknownEvent()
     EventKey eventKey = readNextEventKey();
     assert(eventKey.streamIndex == DataConstants::EVENT_UNKRECORD_INDEX);
 
-    file.seekg(sizeof(int32_t), std::ios_base::cur); // unknown id
-    file.seekg(sizeof(int64_t), std::ios_base::cur); // Timestamp
-    file.seekg(sizeof(int32_t), std::ios_base::cur); // Null
-    file.seekg(sizeof(int32_t), std::ios_base::cur); // Null
+    skip(sizeof(int32_t)); // unknown id
+    skip(sizeof(int64_t)); // Timestamp
+    skip(sizeof(int32_t)); // Null
+    skip(sizeof(int32_t)); // Null
 
     // Right now, we'll just heuristically skip through by 0x1000 at a time until we find a valid stream id
     // TODO Figure out better way to identify how long an unknown record is
     //      from: https://github.com/Isaac-W/KinectXEFTools.
-    file.seekg(0x6000, std::ios_base::cur);
+    skip(0x6000);
     eventKey = peekNextEventKey();
 
     if(!isValidStreamIndex(eventKey.streamIndex))
     {
         // Try next position (0x7000 total length)
-        file.seekg(0x1000, std::ios_base::cur);
+        skip(0x1000);
         eventKey = peekNextEventKey();
 
         if(!isValidStreamIndex(eventKey.streamIndex))
         {
             // Treat as long record (0xC000 total length)
-            file.seekg(0x5000, std::ios_base::cur);
+            skip(0x5000);
 
             eventKey = peekNextEventKey();
             assert(isValidStreamIndex(eventKey.streamIndex)); // Next one should be good
@@ -202,7 +202,7 @@ XEFStream XEFReader::readStreamDescription()
 
     if(compressed)
     {
-        file.seekg(DataConstants::ARC_STREAM_EXTRA_UNK_SIZE, std::ios_base::cur);
+        skip(DataConstants::ARC_STREAM_EXTRA_UNK_SIZE);
     }
 
     XEFEvent guidEvent = readDataEvent();
