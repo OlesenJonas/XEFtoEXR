@@ -26,14 +26,20 @@
 
 using json = nlohmann::json;
 
-int main()
+int main(int argc, char* argv[])
 {
-    std::filesystem::path inputFilePath = "F:/long2.xef";
-    // std::filesystem::path inputFilePath =
-    // "C:/Users/jonas/Documents/GitHub/vrtanz/KinectRecorder/KinectRecorder/misc/out/test2.xef";
-    std::filesystem::path jsonPath =
-        "C:/Users/jonas/Documents/GitHub/vrtanz/KinectRecorder/KinectRecorder/misc/SensorData.json";
-    std::string objectName = "2";
+    if(argc < 3 + 1)
+    {
+        std::cout << "Wrong amount of arguments. Check readme for correct usage!" << std::endl;
+        exit(1);
+    }
+
+    std::string inputPathString = argv[1];
+    std::string jsonPathString = argv[2];
+    std::string objectName = argc >= 3 + 1 ? argv[3] : "";
+
+    std::filesystem::path inputFilePath = inputPathString;
+    std::filesystem::path jsonPath = jsonPathString;
 
     auto start = std::chrono::high_resolution_clock::now();
 
