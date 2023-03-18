@@ -6,10 +6,10 @@
 
 #include <fstream>
 #include <ios>
-#include <map>
 #include <stdint.h>
 #include <string>
 #include <string_view>
+#include <vector>
 
 class XEFReader
 {
@@ -46,7 +46,7 @@ class XEFReader
     std::ifstream file;
 
     int32_t streamCount = 0;
-    std::map<int16_t, std::shared_ptr<XEFStream>> streams;
+    std::vector<XEFStream> streams;
 
     bool endOfStream = false;
     int64_t eventStartAdress = -1;

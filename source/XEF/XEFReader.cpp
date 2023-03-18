@@ -25,6 +25,12 @@ XEFReader::XEFReader(std::string_view path) : path(path)
     skip(8);
 
     eventStartAdress = file.tellg();
+
+    streams.resize(streamCount + 1);
+    for(const auto& stream : streams)
+    {
+        assert(stream.isNull);
+    }
 }
 
 XEFReader::~XEFReader()
@@ -72,9 +78,9 @@ XEFEvent XEFReader::getNextEvent()
         return XEFEvent();
     }
 
-    if(streams.find(eventKey.streamIndex) == streams.end())
+    if(streams[eventKey.streamIndex].isNull)
     {
-        streams[eventKey.streamIndex] = std::make_shared<XEFStream>(readStreamDescription());
+        streams[eventKey.streamIndex] = readStreamDescription();
 
         return getNextEvent();
     }
@@ -131,12 +137,10 @@ XEFEvent XEFReader::readDataEvent()
 
     EventKey eventKey = readNextEventKey();
 
-    // cant use nullptr directly here, since an actual object with storage is needed I think?
-    //      todo: double check
-    std::shared_ptr<XEFStream> eventStream = nullStream;
-    if(streams.find(eventKey.streamIndex) != streams.end())
+    XEFStream* eventStream = &streams[streams.size() - 1];
+    if(eventKey.streamIndex < streams.size() - 1 && !streams[eventKey.streamIndex].isNull)
     {
-        eventStream = streams[eventKey.streamIndex];
+        eventStream = &streams[eventKey.streamIndex];
     }
 
     int32_t dataSize;

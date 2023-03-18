@@ -10,7 +10,7 @@ struct XEFEvent
 
     XEFEvent();
     XEFEvent(
-        std::shared_ptr<XEFStream> eventStream,
+        XEFStream* eventStream,
         int32_t frameIndex,
         int64_t relativeTimeTicks,
         int eventDataSize,
@@ -18,7 +18,7 @@ struct XEFEvent
         std::shared_ptr<uint8_t[]> eventData,
         uint32_t unknown);
 
-    std::shared_ptr<XEFStream> eventStream;
+    XEFStream* eventStream;
     int32_t eventIndex;
     int32_t frameIndex;
     int64_t relativeTimeTicks;

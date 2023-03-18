@@ -5,7 +5,7 @@ XEFEvent::XEFEvent() : isNull(true)
 }
 
 XEFEvent::XEFEvent(
-    std::shared_ptr<XEFStream> eventStream,
+    XEFStream* eventStream,
     int32_t frameIndex,
     int64_t relativeTimeTicks,
     int eventDataSize,
