@@ -1,6 +1,13 @@
 #include "XEFBodyFrame.hpp"
 #include <stdint.h>
 
+const char* XEFJointTypeStrings[] = {
+    "SpineBase",   "SpineMid",      "Neck",         "Head",       "ShoulderLeft", "ElbowLeft", "WristLeft",
+    "HandLeft",    "ShoulderRight", "ElbowRight",   "WristRight", "HandRight",    "HipLeft",   "KneeLeft",
+    "AnkleLeft",   "FootLeft",      "HipRight",     "KneeRight",  "AnkleRight",   "FootRight", "SpineShoulder",
+    "HandTipLeft", "ThumbLeft",     "HandTipRight", "ThumbRight",
+};
+
 void XEFBodyData::fillFromByteStream(ByteStream& stream)
 {
     // todo: vector memory is contiguous, so read all at once?

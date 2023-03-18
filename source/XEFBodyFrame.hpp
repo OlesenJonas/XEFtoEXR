@@ -62,6 +62,7 @@ enum struct XEFJointType : int32_t
     ThumbRight,
     SIZE
 };
+extern const char* XEFJointTypeStrings[];
 
 enum struct XEFExpressionConfidenceLevel : int32_t
 {

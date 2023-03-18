@@ -10,6 +10,7 @@
 #include "Constants.hpp"
 #include "DepthFrame.hpp"
 #include "PointCloudExporter.hpp"
+#include "SkeletonExporter.hpp"
 #include "XEFBodyFrame.hpp"
 #include "XEFReader.hpp"
 #include "jsonConversion.hpp"
@@ -54,6 +55,7 @@ int main()
     const auto colorCameraParams = colorCameraParamsFromJson(jsonObject["ColorCameraParams"]);
     const auto irCameraParams = irCameraParamsFromJson(jsonObject["IrCameraParams"]);
     PointCloudExporter pointCloudExporter{colorCameraParams, irCameraParams};
+    SkeletonExporter skeletonExporter;
 
     int64_t lastEventTime = 0;
     ColorFrame lastColorFrame;
@@ -108,6 +110,9 @@ int main()
                         &lastColorFrame.rgbPixels,
                         &lastDepthFrame.floatPixels,
                         outputDirectory / ("pointcloud" + getIndexSuffix(absoluteFrameIndex) + ".exr"));
+                    skeletonExporter.saveSkeleton(
+                        lastBodyFrame,
+                        outputDirectory / ("skeleton" + getIndexSuffix(absoluteFrameIndex) + ".csv"));
                     absoluteFrameIndex++;
                 }
             }
@@ -119,6 +124,8 @@ int main()
                 &lastColorFrame.rgbPixels,
                 &lastDepthFrame.floatPixels,
                 outputDirectory / ("pointcloud" + getIndexSuffix(absoluteFrameIndex) + ".exr"));
+            skeletonExporter.saveSkeleton(
+                lastBodyFrame, outputDirectory / ("skeleton" + getIndexSuffix(absoluteFrameIndex) + ".csv"));
             absoluteFrameIndex++;
         }
     }
