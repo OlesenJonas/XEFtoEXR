@@ -28,9 +28,9 @@ using json = nlohmann::json;
 
 int main()
 {
-    // std::filesystem::path inputFilePath = "F:/long2.xef";
-    std::filesystem::path inputFilePath =
-        "C:/Users/jonas/Documents/GitHub/vrtanz/KinectRecorder/KinectRecorder/misc/out/test2.xef";
+    std::filesystem::path inputFilePath = "F:/long2.xef";
+    // std::filesystem::path inputFilePath =
+    // "C:/Users/jonas/Documents/GitHub/vrtanz/KinectRecorder/KinectRecorder/misc/out/test2.xef";
     std::filesystem::path jsonPath =
         "C:/Users/jonas/Documents/GitHub/vrtanz/KinectRecorder/KinectRecorder/misc/SensorData.json";
     std::string objectName = "2";
@@ -106,7 +106,8 @@ int main()
             int intervals = std::round(diff / 333333.0f);
             if(intervals > 1 && event.eventIndex > 0)
             {
-                std::cout << intervals - 1 << " frames dropped! Filling gap with last known" << std::endl;
+                std::cout << "\r" << intervals - 1 << " frame(s) missing! Filling gap with last received"
+                          << std::endl;
                 // dont want gaps in the video, so use last received frames to fill
                 for(int i = 0; i < intervals - 1; i++)
                 {
